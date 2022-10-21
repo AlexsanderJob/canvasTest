@@ -1,0 +1,26 @@
+@import "./normalize.css";
+
+.main {
+    padding: 50px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+canvas {
+    border: 3px red solid;
+    display: block;
+    margin: 0 auto;
+}
+
+.main-btn {
+    padding: 50px 120px;
+}
+
+#delete {
+    border: 3px red solid;
+    background: transparent;
+    width: 15%;
+    color: red;
+}
