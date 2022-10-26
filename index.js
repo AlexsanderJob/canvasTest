@@ -1,12 +1,14 @@
-const btn = document.getElementById("delete")
+const btn = document.getElementById("delete");
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 let arrLines = [];
 let newLineFrom;
 let newLineTo;
+let myRequestId;
 
 canvas.width = 1350;
 canvas.height = 500;
+ctx.strokeStyle = 'black';
 
 canvas.addEventListener("mousemove", function (e) {
 
@@ -29,7 +31,7 @@ canvas.addEventListener("mousemove", function (e) {
             ctx.lineTo(e.offsetX, e.offsetY);
             ctx.stroke();
             const test = [...arrLines, { from: newLineFrom, to: {
-                x: e.offsetX,
+                    x: e.offsetX,
                     y: e.offsetY
                 } }]
             for (const index in test) {
@@ -90,11 +92,34 @@ function checkLineIntersection(line1StartX, line1StartY, line1EndX, line1EndY, l
     ctx.arc(Math.round(result.x), Math.round(result.y), 5, 0 * Math.PI, 2 * Math.PI);
     ctx.fill();
 }
+let v = 0;
+function hideLine () {
+    for (let { from, to } of arrLines) {
+        let grad = ctx.createLinearGradient(from.x, from.y, to.x, to.y);
+        grad.addColorStop(0 + v, 'white');
+        grad.addColorStop(0.5, 'black');
+        grad.addColorStop(1 - v, 'white');
+        ctx.strokeStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.stroke();
+    }
+    v = v + 0.01;
+    if (v >= 0.5) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = 'black';
+        v = 0;
+        arrLines = [];
+        cancelAnimationFrame(myRequestId);
+        btn.disabled = false;
+        return;
+    }
+    myRequestId = requestAnimationFrame(hideLine);
+}
 
-btn.addEventListener("click", function () {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    arrLines = []
-})
-
-
+btn.addEventListener("click", function (e) {
+    e.preventDefault();
+    btn.disabled = true;
+    hideLine();
+});
